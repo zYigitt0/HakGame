@@ -157,6 +157,7 @@
             flex-direction: column;
             align-items: center;
             text-align: center;
+            cursor: pointer;
         }
         .showcase-card:hover {
             transform: translateY(-5px);
@@ -212,10 +213,16 @@
             box-sizing: border-box;
             justify-content: center;
         }
-        .section-action-button:hover {
+        .section-action-button i {
+            transition: transform 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+        }
+        .showcase-card:hover .section-action-button {
             background: #ba68c8;
             color: #000;
             box-shadow: 0 0 20px rgba(186, 104, 200, 0.4);
+        }
+        .showcase-card:hover .section-action-button i {
+            transform: translateX(6px);
         }
         .translate-modal {
             position: fixed;
@@ -306,8 +313,11 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: all 0.2s ease;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             flex-shrink: 0;
+        }
+        .swap-languages-btn i {
+            transition: transform 0.4s ease;
         }
         .swap-languages-btn:hover {
             background: rgba(186, 104, 200, 0.12);
@@ -490,14 +500,14 @@
         <section id="apps" class="content-section">
             <h2 class="section-title">Our Applications</h2>
             <div class="grid-container">
-                <div class="showcase-card">
+                <div class="showcase-card" onclick="openTranslateModal()">
                     <div class="card-icon-wrapper">
                         <i class="fas fa-language"></i>
                     </div>
                     <h3 class="card-title">Hak Translate Tool</h3>
                     <p class="card-description">Translate tool.</p>
-                    <button class="section-action-button" onclick="openTranslateModal()">
-                        <i class="fas fa-translate"></i> Translate Now
+                    <button class="section-action-button">
+                        Translate Now <i class="fas fa-arrow-right"></i>
                     </button>
                 </div>
             </div>
@@ -605,6 +615,9 @@
             const targetSelect = document.getElementById('targetLang');
             const sourceText = document.getElementById('sourceText');
             const targetText = document.getElementById('targetText');
+            const swapBtnIcon = document.querySelector('.swap-languages-btn i');
+
+            swapBtnIcon.style.transform = swapBtnIcon.style.transform === 'rotate(180deg)' ? 'rotate(0deg)' : 'rotate(180deg)';
 
             let currentSource = sourceSelect.value;
             let currentTarget = targetSelect.value;
