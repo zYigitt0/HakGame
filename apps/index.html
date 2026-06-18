@@ -24,6 +24,11 @@
             background: 
                 radial-gradient(circle at 15% 25%, rgba(186, 104, 200, 0.1) 0%, transparent 40%),
                 radial-gradient(circle at 85% 75%, rgba(147, 112, 219, 0.1) 0%, transparent 40%);
+            animation: backgroundFloat 12s infinite ease-in-out;
+        }
+        @keyframes backgroundFloat {
+            0%, 100% { transform: scale(1) translate(0, 0); }
+            50% { transform: scale(1.08) translate(15px, -15px); }
         }
         header {
             position: sticky;
@@ -42,12 +47,18 @@
             display: flex;
             align-items: center;
             gap: 15px;
+            cursor: pointer;
         }
         .studio-logo {
             width: 45px;
             height: auto;
             border-radius: 8px;
             box-shadow: 0 0 15px rgba(186, 104, 200, 0.4);
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.3s;
+        }
+        .logo-container:hover .studio-logo {
+            transform: scale(1.1) rotate(5deg);
+            box-shadow: 0 0 25px rgba(186, 104, 200, 0.8);
         }
         .studio-name {
             font-size: 26px;
@@ -62,12 +73,28 @@
             align-items: center;
         }
         nav ul { display: flex; list-style: none; gap: 35px; margin: 0; padding: 0; }
+        nav li { position: relative; }
         nav a {
             color: #a0a0a0;
             text-decoration: none;
             font-size: 15px;
             font-weight: 600;
             transition: 0.3s;
+            padding-bottom: 6px;
+        }
+        nav a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: #ba68c8;
+            transition: width 0.3s ease;
+            box-shadow: 0 0 8px rgba(186, 104, 200, 0.8);
+        }
+        nav a:hover::after, nav a.active::after {
+            width: 100%;
         }
         nav a:hover, nav a.active {
             color: #ba68c8;
@@ -84,6 +111,11 @@
             background: linear-gradient(135deg, #fff 60%, #ba68c8);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
+            animation: titleFocus 0.8s ease;
+        }
+        @keyframes titleFocus {
+            from { opacity: 0; transform: translateY(-10px); filter: blur(4px); }
+            to { opacity: 1; transform: translateY(0); filter: blur(0); }
         }
         .apps-grid {
             display: grid;
@@ -95,20 +127,44 @@
             border: 1px solid rgba(255, 255, 255, 0.05);
             border-radius: 12px;
             padding: 30px;
-            transition: 0.3s;
+            transition: transform 0.4s cubic-bezier(0.165, 0.84, 0.44, 1), border-color 0.3s, box-shadow 0.4s;
             cursor: pointer;
             position: relative;
             overflow: hidden;
+            animation: fadeInUp 0.6s cubic-bezier(0.165, 0.84, 0.44, 1) backwards;
+        }
+        .app-card:nth-child(1) { animation-delay: 0.15s; }
+        .app-card:nth-child(2) { animation-delay: 0.3s; }
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .app-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: -100%; width: 50%; height: 100%;
+            background: linear-gradient(to right, transparent, rgba(186, 104, 200, 0.08), transparent);
+            transform: skewX(-25deg);
+            transition: none;
+        }
+        .app-card:hover::before {
+            left: 150%;
+            transition: left 0.8s ease-in-out;
         }
         .app-card:hover {
-            transform: translateY(-5px);
-            border-color: #ba68c8;
-            box-shadow: 0 10px 30px rgba(186, 104, 200, 0.2);
+            transform: translateY(-8px);
+            border-color: rgba(186, 104, 200, 0.6);
+            box-shadow: 0 15px 35px rgba(186, 104, 200, 0.15), 0 0 15px rgba(186, 104, 200, 0.05);
         }
         .app-icon {
             font-size: 40px;
             color: #ba68c8;
             margin-bottom: 20px;
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), color 0.3s;
+        }
+        .app-card:hover .app-icon {
+            transform: scale(1.15) translateY(-4px);
+            color: #9370db;
         }
         .app-title {
             font-size: 22px;
@@ -128,120 +184,204 @@
             display: flex;
             align-items: center;
             gap: 8px;
+            transition: color 0.3s;
         }
-        .modal-overlay {
+        .app-launch i {
+            transition: transform 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+        }
+        .app-card:hover .app-launch {
+            color: #9370db;
+        }
+        .app-card:hover .app-launch i {
+            transform: translateX(6px);
+        }
+        .translate-modal {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(12, 8, 20, 0.85);
-            backdrop-filter: blur(8px);
+            backdrop-filter: blur(15px);
             display: flex;
             justify-content: center;
             align-items: center;
             z-index: 2000;
             opacity: 0;
             pointer-events: none;
-            transition: 0.3s ease;
+            transition: opacity 0.4s ease;
         }
-        .modal-overlay.active {
+        .translate-modal.active {
             opacity: 1;
-            pointer-events: all;
+            pointer-events: auto;
         }
-        .translator-box {
-            background: rgba(20, 15, 32, 0.95);
-            border: 1px solid #ba68c8;
-            border-radius: 16px;
+        .modal-content {
+            background: rgba(12, 8, 20, 0.95);
+            border: 1px solid rgba(186, 104, 200, 0.2);
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 750px;
             width: 90%;
-            max-width: 800px;
-            padding: 30px;
-            box-shadow: 0 0 40px rgba(186, 104, 200, 0.25);
-            transform: translateY(20px);
-            transition: 0.3s ease;
+            box-shadow: 0 20px 50px rgba(186, 104, 200, 0.1);
+            position: relative;
+            transform: translateY(-30px) scale(0.95);
+            transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.5s ease;
         }
-        .modal-overlay.active .translator-box {
-            transform: translateY(0);
+        .translate-modal.active .modal-content {
+            transform: translateY(0) scale(1);
         }
-        .translator-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-            padding-bottom: 15px;
-        }
-        .translator-header h3 {
-            margin: 0;
+        .close-modal {
+            position: absolute;
+            top: 20px; right: 25px;
             font-size: 24px;
-            color: #ba68c8;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            text-shadow: 0 0 10px rgba(186, 104, 200, 0.3);
-        }
-        .close-btn {
-            background: transparent;
-            border: none;
             color: #a0a0a0;
-            font-size: 24px;
             cursor: pointer;
-            transition: 0.3s;
+            transition: transform 0.3s, color 0.3s;
         }
-        .close-btn:hover { color: #ff4e00; }
-        .translator-controls {
+        .close-modal:hover {
+            color: #ba68c8;
+            transform: rotate(90deg);
+        }
+        .translate-menu-bar {
             display: flex;
-            gap: 15px;
-            margin-bottom: 20px;
             align-items: center;
+            justify-content: space-between;
+            margin-bottom: 25px;
+            gap: 12px;
         }
-        .lang-select {
-            background: rgba(255, 255, 255, 0.04);
+        .select-wrapper {
+            flex: 1;
+            background: #151026;
             border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            padding: 4px 16px;
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+        .select-wrapper:focus-within {
+            border-color: #ba68c8;
+            box-shadow: 0 0 10px rgba(186, 104, 200, 0.15);
+        }
+        .translate-menu-bar select {
+            width: 100%;
+            background: transparent;
             color: #fff;
-            padding: 10px 15px;
-            border-radius: 8px;
+            border: none;
+            padding: 10px 0;
+            font-size: 14px;
+            font-weight: 600;
             outline: none;
+            cursor: pointer;
+        }
+        .translate-menu-bar select option {
+            background: #151026;
+            color: #fff;
+        }
+        .swap-languages-btn {
+            background: #151026;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            color: #ba68c8;
             font-size: 14px;
             cursor: pointer;
-            transition: 0.3s;
+            width: 42px;
+            height: 42px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            flex-shrink: 0;
         }
-        .lang-select:focus { border-color: #ba68c8; }
-        .lang-select option { background: #140f20; color: #fff; }
-        .swap-btn {
-            background: transparent;
-            border: none;
-            color: #ba68c8;
-            font-size: 18px;
-            cursor: pointer;
-            transition: 0.3s;
+        .swap-languages-btn i {
+            transition: transform 0.4s ease;
         }
-        .swap-btn:hover { transform: rotate(180deg); color: #9370db; }
-        .text-areas {
+        .swap-languages-btn:hover {
+            background: rgba(186, 104, 200, 0.12);
+            border-color: #ba68c8;
+            color: #fff;
+        }
+        .swap-languages-btn:active i {
+            transform: rotate(180deg);
+        }
+        .translate-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 20px;
         }
-        @media (max-width: 768px) {
-            .text-areas { grid-template-columns: 1fr; }
+        .textarea-container {
+            position: relative;
+            width: 100%;
         }
-        .text-box {
+        .translate-grid textarea {
+            width: 100%;
+            box-sizing: border-box;
             background: rgba(0, 0, 0, 0.3);
-            border: 1px solid rgba(255, 255, 255, 0.06);
-            border-radius: 8px;
             color: #fff;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 12px;
             padding: 15px;
-            font-size: 16px;
+            height: 200px;
             resize: none;
-            height: 180px;
+            font-size: 15px;
+            line-height: 1.5;
             outline: none;
-            transition: 0.3s;
-            font-family: inherit;
+            transition: border-color 0.3s, background-color 0.3s, box-shadow 0.3s;
         }
-        .text-box:focus { border-color: #ba68c8; box-shadow: 0 0 10px rgba(186, 104, 200, 0.1); }
-        .status-bar {
-            margin-top: 15px;
-            font-size: 13px;
-            color: #a0a0a0;
-            text-align: right;
-            min-height: 18px;
+        .translate-grid textarea:focus {
+            border-color: #ba68c8;
+            background: rgba(0, 0, 0, 0.4);
+        }
+        .typing-loader {
+            display: none;
+            position: absolute;
+            bottom: 15px;
+            right: 20px;
+            align-items: center;
+            gap: 5px;
+            background: rgba(21, 16, 38, 0.85);
+            padding: 8px 14px;
+            border-radius: 20px;
+            border: 1px solid rgba(186, 104, 200, 0.25);
+            pointer-events: none;
+        }
+        .typing-loader.active {
+            display: flex;
+        }
+        .typing-loader .dot {
+            width: 6px;
+            height: 6px;
+            background: #ba68c8;
+            border-radius: 50%;
+            animation: waveDots 1.2s infinite ease-in-out;
+        }
+        .typing-loader .dot:nth-child(2) { animation-delay: 0.2s; }
+        .typing-loader .dot:nth-child(3) { animation-delay: 0.4s; }
+        
+        @keyframes waveDots {
+            0%, 60%, 100% { transform: translateY(0); }
+            30% { transform: translateY(-6px); }
+        }
+        .output-container.loading textarea {
+            border-color: rgba(186, 104, 200, 0.4);
+            box-shadow: 0 0 12px rgba(186, 104, 200, 0.1);
+        }
+        .card-title {
+            font-size: 24px;
+            margin: 0 0 12px 0;
+            color: #ffffff;
+        }
+        @media (max-width: 768px) {
+            header {
+                flex-direction: column;
+                gap: 15px;
+                padding: 15px 4%;
+            }
+            nav ul { gap: 20px; }
+            nav a { font-size: 14px; }
+            .apps-page { padding: 40px 4%; }
+            .page-title { font-size: 32px; text-align: center; }
+            .modal-content { padding: 25px 15px; width: 90%; }
+            .translate-menu-bar { flex-direction: column; gap: 10px; }
+            .select-wrapper { width: 100%; box-sizing: border-box; padding: 2px 12px; }
+            .swap-languages-btn { width: 40px; height: 40px; border-radius: 12px; transform: rotate(90deg); }
+            .translate-grid { grid-template-columns: 1fr; gap: 15px; }
+            .translate-grid textarea { height: 140px; }
         }
     </style>
 </head>
@@ -269,10 +409,10 @@
         
         <div class="apps-grid">
             
-            <div class="app-card" onclick="openTranslator()">
+            <div class="app-card" onclick="openTranslateModal()">
                 <i class="fas fa-language app-icon"></i>
                 <h3 class="app-title">Hak Translate Tool</h3>
-                <p class="app-desc">Translate Tool.</p>
+                <p class="app-desc">Translate tool.</p>
                 <div class="app-launch">Open App <i class="fas fa-arrow-right"></i></div>
             </div>
 
@@ -286,122 +426,144 @@
         </div>
     </main>
 
-    <div class="modal-overlay" id="translateModal">
-        <div class="translator-box">
-            <div class="translator-header">
-                <h3><i class="fas fa-language"></i> Hak Translate</h3>
-                <button class="close-btn" onclick="closeTranslator()"><i class="fas fa-times"></i></button>
-            </div>
-
-            <div class="translator-controls">
-                <select class="lang-select" id="langFrom" onchange="triggerInstantTranslation()">
-                    <option value="en">English</option>
-                    <option value="tr">Türkçe</option>
-                    <option value="de">Deutsch</option>
-                    <option value="es">Español</option>
-                    <option value="fr">Français</option>
-                </select>
+    <div id="translateModal" class="translate-modal">
+        <div class="modal-content">
+            <i class="fas fa-times close-modal" onclick="closeTranslateModal()"></i>
+            <h3 class="card-title" style="text-align: left; margin-bottom: 20px;">
+                <i class="fas fa-brain" style="color: #ba68c8; margin-right: 10px;"></i> Hak Translate Engine
+            </h3>
+            
+            <div class="translate-menu-bar">
+                <div class="select-wrapper">
+                    <select id="sourceLang" onchange="triggerTranslation()">
+                        <option value="auto">Detect Language (Auto)</option>
+                        <option value="en">English</option>
+                        <option value="tr">Turkish</option>
+                        <option value="es">Spanish</option>
+                        <option value="de">German</option>
+                        <option value="fr">French</option>
+                    </select>
+                </div>
                 
-                <button class="swap-btn" onclick="swapLanguages()"><i class="fas fa-exchange-alt"></i></button>
-
-                <select class="lang-select" id="langTo" onchange="triggerInstantTranslation()">
-                    <option value="tr">Türkçe</option>
-                    <option value="en">English</option>
-                    <option value="de">Deutsch</option>
-                    <option value="es">Español</option>
-                    <option value="fr">Français</option>
-                </select>
-            </div>
-
-            <div class="text-areas">
-                <textarea class="text-box" id="inputText" placeholder="Type text here..." oninput="handleTyping()"></textarea>
-                <textarea class="text-box" id="outputText" placeholder="Translation will appear here..." readonly></textarea>
+                <button class="swap-languages-btn" onclick="swapLanguages()" title="Swap Languages">
+                    <i class="fas fa-exchange-alt"></i>
+                </button>
+                
+                <div class="select-wrapper">
+                    <select id="targetLang" onchange="triggerTranslation()">
+                        <option value="tr">Turkish</option>
+                        <option value="en">English</option>
+                        <option value="es">Spanish</option>
+                        <option value="de">German</option>
+                        <option value="fr">French</option>
+                    </select>
+                </div>
             </div>
             
-            <div class="status-bar" id="statusBar">Instant translation active</div>
+            <div class="translate-grid">
+                <div class="textarea-container">
+                    <textarea id="sourceText" placeholder="Type or paste context here, system will analyze automatically..." oninput="triggerTranslation()"></textarea>
+                </div>
+                
+                <div class="textarea-container output-container">
+                    <textarea id="targetText" placeholder="Translation output will appear here..." readonly></textarea>
+                    
+                    <div class="typing-loader" id="typingLoader">
+                        <div class="dot"></div>
+                        <div class="dot"></div>
+                        <div class="dot"></div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
     <script>
-        let typingTimer;
-        const doneTypingInterval = 300;
-
-        function openTranslator() {
+        let debounceTimer;
+        
+        function openTranslateModal() {
             document.getElementById('translateModal').classList.add('active');
-            document.getElementById('inputText').focus();
+            document.body.style.overflow = 'hidden';
         }
-
-        function closeTranslator() {
+        
+        function closeTranslateModal() {
             document.getElementById('translateModal').classList.remove('active');
+            document.body.style.overflow = 'auto';
         }
-
+        
         function swapLanguages() {
-            let from = document.getElementById('langFrom');
-            let to = document.getElementById('langTo');
-            let temp = from.value;
-            from.value = to.value;
-            to.value = temp;
+            const sourceSelect = document.getElementById('sourceLang');
+            const targetSelect = document.getElementById('targetLang');
+            const sourceText = document.getElementById('sourceText');
+            const targetText = document.getElementById('targetText');
+            const swapBtnIcon = document.querySelector('.swap-languages-btn i');
 
-            let inputText = document.getElementById('inputText').value;
-            let outputText = document.getElementById('outputText').value;
-            document.getElementById('inputText').value = outputText;
-            document.getElementById('outputText').value = "";
-            
-            if (outputText.trim()) {
-                doTranslation();
+            swapBtnIcon.style.transform = swapBtnIcon.style.transform === 'rotate(180deg)' ? 'rotate(0deg)' : 'rotate(180deg)';
+
+            let currentSource = sourceSelect.value;
+            let currentTarget = targetSelect.value;
+
+            if (currentSource === 'auto') {
+                currentSource = currentTarget;
+                currentTarget = (currentSource === 'tr') ? 'en' : 'tr';
+            } else {
+                let temp = currentSource;
+                currentSource = currentTarget;
+                currentTarget = temp;
             }
+
+            sourceSelect.value = currentSource;
+            targetSelect.value = currentTarget;
+
+            let tempText = sourceText.value;
+            sourceText.value = targetText.value;
+            targetText.value = tempText;
+
+            triggerTranslation();
         }
 
-        function handleTyping() {
-            clearTimeout(typingTimer);
-            let text = document.getElementById('inputText').value;
-            
-            if (!text.trim()) {
-                document.getElementById('outputText').value = "";
-                document.getElementById('statusBar').innerText = "Instant translation active";
-                return;
-            }
-            
-            document.getElementById('statusBar').innerText = "Typing...";
-            typingTimer = setTimeout(doTranslation, doneTypingInterval);
-        }
+        function triggerTranslation() {
+            const text = document.getElementById('sourceText').value;
+            const source = document.getElementById('sourceLang').value;
+            const target = document.getElementById('targetLang').value;
+            const loader = document.getElementById('typingLoader');
+            const outputContainer = document.querySelector('.output-container');
 
-        function triggerInstantTranslation() {
-            if (document.getElementById('inputText').value.trim()) {
-                doTranslation();
-            }
-        }
-
-        async function doTranslation() {
-            let text = document.getElementById('inputText').value;
-            let fromLang = document.getElementById('langFrom').value;
-            let toLang = document.getElementById('langTo').value;
-            let outputBox = document.getElementById('outputText');
-            let statusBar = document.getElementById('statusBar');
+            clearTimeout(debounceTimer);
 
             if (!text.trim()) {
-                outputBox.value = "";
-                statusBar.innerText = "Instant translation active";
+                document.getElementById('targetText').value = '';
+                loader.classList.remove('active');
+                outputContainer.classList.remove('loading');
                 return;
             }
 
-            statusBar.innerText = "Translating...";
+            loader.classList.add('active');
+            outputContainer.classList.add('loading');
 
-            try {
-                let url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=${fromLang}&tl=${toLang}&dt=t&q=${encodeURIComponent(text)}`;
-                let response = await fetch(url);
-                let data = await response.json();
-                
-                if(data && data[0]) {
-                    let translatedText = data[0].map(item => item[0]).join("");
-                    outputBox.value = translatedText;
-                    statusBar.innerText = "Synced";
-                } else {
-                    statusBar.innerText = "Translation error";
-                }
-            } catch (error) {
-                statusBar.innerText = "Connection lost";
-                console.error(error);
+            debounceTimer = setTimeout(() => {
+                fetch(`https://translate.googleapis.com/translate_a/single?client=gtx&sl=${source}&tl=${target}&dt=t&q=${encodeURIComponent(text)}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data && data[0]) {
+                            let translated = data[0].map(item => item[0]).join('');
+                            document.getElementById('targetText').value = translated;
+                        }
+                    })
+                    .catch(() => {
+                        document.getElementById('targetText').value = 'Translation failed.';
+                    })
+                    .finally(() => {
+                        loader.classList.remove('active');
+                        outputContainer.classList.remove('loading');
+                    });
+            }, 300);
+        }
+
+        window.onclick = function(event) {
+            const modal = document.getElementById('translateModal');
+            if (event.target === modal) {
+                closeTranslateModal();
             }
         }
     </script>
