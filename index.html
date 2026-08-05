@@ -157,7 +157,8 @@
             flex-direction: column;
             align-items: center;
             text-align: center;
-            cursor: pointer;
+            text-decoration: none;
+            color: inherit;
         }
         .showcase-card:hover {
             transform: translateY(-5px);
@@ -222,169 +223,7 @@
             box-shadow: 0 0 20px rgba(186, 104, 200, 0.4);
         }
         .showcase-card:hover .section-action-button i {
-            transform: translateX(6px);
-        }
-        .translate-modal {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(12, 8, 20, 0.85);
-            backdrop-filter: blur(15px);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 2000;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.4s ease;
-        }
-        .translate-modal.active {
-            opacity: 1;
-            pointer-events: auto;
-        }
-        .modal-content {
-            background: rgba(12, 8, 20, 0.95);
-            border: 1px solid rgba(186, 104, 200, 0.2);
-            border-radius: 20px;
-            padding: 40px;
-            max-width: 750px;
-            width: 90%;
-            box-shadow: 0 20px 50px rgba(186, 104, 200, 0.1);
-            position: relative;
-            transform: scale(0.9);
-            transition: transform 0.4s ease;
-        }
-        .translate-modal.active .modal-content {
-            transform: scale(1);
-        }
-        .close-modal {
-            position: absolute;
-            top: 20px; right: 25px;
-            font-size: 24px;
-            color: #a0a0a0;
-            cursor: pointer;
-            transition: 0.3s;
-        }
-        .close-modal:hover {
-            color: #ba68c8;
-        }
-        .translate-menu-bar {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 25px;
-            gap: 12px;
-        }
-        .select-wrapper {
-            flex: 1;
-            background: #151026;
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 12px;
-            padding: 4px 16px;
-            transition: border-color 0.3s, box-shadow 0.3s;
-        }
-        .select-wrapper:focus-within {
-            border-color: #ba68c8;
-            box-shadow: 0 0 10px rgba(186, 104, 200, 0.15);
-        }
-        .translate-menu-bar select {
-            width: 100%;
-            background: transparent;
-            color: #fff;
-            border: none;
-            padding: 10px 0;
-            font-size: 14px;
-            font-weight: 600;
-            outline: none;
-            cursor: pointer;
-        }
-        .translate-menu-bar select option {
-            background: #151026;
-            color: #fff;
-        }
-        .swap-languages-btn {
-            background: #151026;
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            color: #ba68c8;
-            font-size: 14px;
-            cursor: pointer;
-            width: 42px;
-            height: 42px;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            flex-shrink: 0;
-        }
-        .swap-languages-btn i {
-            transition: transform 0.4s ease;
-        }
-        .swap-languages-btn:hover {
-            background: rgba(186, 104, 200, 0.12);
-            border-color: #ba68c8;
-            color: #fff;
-        }
-        .translate-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-        }
-        .textarea-container {
-            position: relative;
-            width: 100%;
-        }
-        .translate-grid textarea {
-            width: 100%;
-            box-sizing: border-box;
-            background: rgba(0, 0, 0, 0.3);
-            color: #fff;
-            border: 1px solid rgba(255, 255, 255, 0.06);
-            border-radius: 12px;
-            padding: 15px;
-            height: 200px;
-            resize: none;
-            font-size: 15px;
-            line-height: 1.5;
-            outline: none;
-            transition: border-color 0.3s, background-color 0.3s, box-shadow 0.3s;
-        }
-        .translate-grid textarea:focus {
-            border-color: #ba68c8;
-            background: rgba(0, 0, 0, 0.4);
-        }
-        .typing-loader {
-            display: none;
-            position: absolute;
-            bottom: 15px;
-            right: 20px;
-            align-items: center;
-            gap: 5px;
-            background: rgba(21, 16, 38, 0.85);
-            padding: 8px 14px;
-            border-radius: 20px;
-            border: 1px solid rgba(186, 104, 200, 0.25);
-            pointer-events: none;
-        }
-        .typing-loader.active {
-            display: flex;
-        }
-        .typing-loader .dot {
-            width: 6px;
-            height: 6px;
-            background: #ba68c8;
-            border-radius: 50%;
-            animation: waveDots 1.2s infinite ease-in-out;
-        }
-        .typing-loader .dot:nth-child(2) { animation-delay: 0.2s; }
-        .typing-loader .dot:nth-child(3) { animation-delay: 0.4s; }
-        
-        @keyframes waveDots {
-            0%, 60%, 100% { transform: translateY(0); }
-            30% { transform: translateY(-6px); }
-        }
-        .output-container.loading textarea {
-            border-color: rgba(186, 104, 200, 0.4);
-            box-shadow: 0 0 12px rgba(186, 104, 200, 0.1);
+            transform: translateY(3px);
         }
         .profiles-section {
             padding: 100px 6%;
@@ -457,12 +296,6 @@
             .hero-subtitle { font-size: 15px; margin-bottom: 30px; }
             .coming-soon-text { font-size: 32px; }
             .content-section, .profiles-section { padding: 60px 4%; }
-            .modal-content { padding: 25px 15px; width: 90%; }
-            .translate-menu-bar { flex-direction: column; gap: 10px; }
-            .select-wrapper { width: 100%; box-sizing: border-box; padding: 2px 12px; }
-            .swap-languages-btn { width: 40px; height: 40px; border-radius: 12px; transform: rotate(90deg); }
-            .translate-grid { grid-template-columns: 1fr; gap: 15px; }
-            .translate-grid textarea { height: 140px; }
         }
     </style>
 </head>
@@ -479,7 +312,7 @@
             <ul>
                 <li><a href="#home">Home</a></li>
                 <li><a href="#games">Games</a></li>
-                <li><a href="apps/index.html">Apps</a></li>
+                <li><a href="#apps">Apps</a></li>
                 <li><a href="#profiles">My Profiles</a></li>
             </ul>
         </nav>
@@ -493,82 +326,30 @@
         </section>
 
         <section id="games" class="content-section">
-            <h2 class="section-title">My Games</h2>
+            <h2 class="section-title">Our Games</h2>
             <div class="coming-soon-text">COMING SOON</div>
         </section>
 
         <section id="apps" class="content-section">
-            <h2 class="section-title">My Applications</h2>
+            <h2 class="section-title">Our Applications</h2>
             <div class="grid-container">
-                <div class="showcase-card" onclick="openTranslateModal()">
+                <a href="zYigitt_Macro.exe" download class="showcase-card">
                     <div class="card-icon-wrapper">
-                        <i class="fas fa-language"></i>
+                        <i class="fas fa-mouse-pointer"></i>
                     </div>
-                    <h3 class="card-title">Hak Translate Tool</h3>
-                    <p class="card-description">Translate tool.</p>
-                    <button class="section-action-button">
-                        Translate Now <i class="fas fa-arrow-right"></i>
-                    </button>
-                </div>
+                    <h3 class="card-title">zYigitt Macro</h3>
+                    <p class="card-description">Macro.</p>
+
+                    <div class="section-action-button">
+                        Download <i class="fas fa-download"></i>
+                    </div>
+                </a>
             </div>
         </section>
-
-        <div id="translateModal" class="translate-modal">
-            <div class="modal-content">
-                <i class="fas fa-times close-modal" onclick="closeTranslateModal()"></i>
-                <h3 class="card-title" style="text-align: left; margin-bottom: 20px;">
-                    <i class="fas fa-brain" style="color: #ba68c8; margin-right: 10px;"></i> Hak Translate Engine
-                </h3>
-                
-                <div class="translate-menu-bar">
-                    <div class="select-wrapper">
-                        <select id="sourceLang" onchange="triggerTranslation()">
-                            <option value="auto">Detect Language (Auto)</option>
-                            <option value="en">English</option>
-                            <option value="tr">Turkish</option>
-                            <option value="es">Spanish</option>
-                            <option value="de">German</option>
-                            <option value="fr">French</option>
-                        </select>
-                    </div>
-                    
-                    <button class="swap-languages-btn" onclick="swapLanguages()" title="Swap Languages">
-                        <i class="fas fa-exchange-alt"></i>
-                    </button>
-                    
-                    <div class="select-wrapper">
-                        <select id="targetLang" onchange="triggerTranslation()">
-                            <option value="tr">Turkish</option>
-                            <option value="en">English</option>
-                            <option value="es">Spanish</option>
-                            <option value="de">German</option>
-                            <option value="fr">French</option>
-                        </select>
-                    </div>
-                </div>
-                
-                <div class="translate-grid">
-                    <div class="textarea-container">
-                        <textarea id="sourceText" placeholder="Type or paste context here, system will analyze automatically..." oninput="triggerTranslation()"></textarea>
-                    </div>
-                    
-                    <div class="textarea-container output-container">
-                        <textarea id="targetText" placeholder="Translation output will appear here..." readonly></textarea>
-                        
-                        <div class="typing-loader" id="typingLoader">
-                            <div class="dot"></div>
-                            <div class="dot"></div>
-                            <div class="dot"></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
 
         <section id="profiles" class="profiles-section">
             <h2 class="section-title">My Profiles</h2>
             <div class="linktree-container">
-                
                 <a href="https://instagram.com/zyigitt0" target="_blank" class="social-link instagram">
                     <span><i class="fab fa-instagram"></i> Instagram</span>
                     <i class="fas fa-chevron-right arrow-icon"></i>
@@ -588,7 +369,6 @@
                     <span><i class="fab fa-steam"></i> Steam</span>
                     <i class="fas fa-chevron-right arrow-icon"></i>
                 </a>
-
             </div>
         </section>
     </main>
@@ -596,96 +376,6 @@
     <footer>
         <p class="copyright-text">© 2026 HakGame All Rights Reserved.</p>
     </footer>
-
-    <script>
-        let debounceTimer;
-        
-        function openTranslateModal() {
-            document.getElementById('translateModal').classList.add('active');
-            document.body.style.overflow = 'hidden';
-        }
-        
-        function closeTranslateModal() {
-            document.getElementById('translateModal').classList.remove('active');
-            document.body.style.overflow = 'auto';
-        }
-        
-        function swapLanguages() {
-            const sourceSelect = document.getElementById('sourceLang');
-            const targetSelect = document.getElementById('targetLang');
-            const sourceText = document.getElementById('sourceText');
-            const targetText = document.getElementById('targetText');
-            const swapBtnIcon = document.querySelector('.swap-languages-btn i');
-
-            swapBtnIcon.style.transform = swapBtnIcon.style.transform === 'rotate(180deg)' ? 'rotate(0deg)' : 'rotate(180deg)';
-
-            let currentSource = sourceSelect.value;
-            let currentTarget = targetSelect.value;
-
-            if (currentSource === 'auto') {
-                currentSource = currentTarget;
-                currentTarget = (currentSource === 'tr') ? 'en' : 'tr';
-            } else {
-                let temp = currentSource;
-                currentSource = currentTarget;
-                currentTarget = temp;
-            }
-
-            sourceSelect.value = currentSource;
-            targetSelect.value = currentTarget;
-
-            let tempText = sourceText.value;
-            sourceText.value = targetText.value;
-            targetText.value = tempText;
-
-            triggerTranslation();
-        }
-
-        function triggerTranslation() {
-            const text = document.getElementById('sourceText').value;
-            const source = document.getElementById('sourceLang').value;
-            const target = document.getElementById('targetLang').value;
-            const loader = document.getElementById('typingLoader');
-            const outputContainer = document.querySelector('.output-container');
-
-            clearTimeout(debounceTimer);
-
-            if (!text.trim()) {
-                document.getElementById('targetText').value = '';
-                loader.classList.remove('active');
-                outputContainer.classList.remove('loading');
-                return;
-            }
-
-            loader.classList.add('active');
-            outputContainer.classList.add('loading');
-
-            debounceTimer = setTimeout(() => {
-                fetch(`https://translate.googleapis.com/translate_a/single?client=gtx&sl=${source}&tl=${target}&dt=t&q=${encodeURIComponent(text)}`)
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data && data[0]) {
-                            let translated = data[0].map(item => item[0]).join('');
-                            document.getElementById('targetText').value = translated;
-                        }
-                    })
-                    .catch(() => {
-                        document.getElementById('targetText').value = 'Translation failed.';
-                    })
-                    .finally(() => {
-                        loader.classList.remove('active');
-                        outputContainer.classList.remove('loading');
-                    });
-            }, 300);
-        }
-
-        window.onclick = function(event) {
-            const modal = document.getElementById('translateModal');
-            if (event.target === modal) {
-                closeTranslateModal();
-            }
-        }
-    </script>
 
 </body>
 </html>
