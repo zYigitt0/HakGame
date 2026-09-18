@@ -82,7 +82,7 @@
             flex: 1;
         }
         .content-section {
-            padding: 80px 6%;
+            padding: 100px 6%;
             text-align: center;
         }
         .section-title {
@@ -93,95 +93,20 @@
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
-        .section-subtitle {
-            font-size: 16px;
-            color: #a0a0a0;
-            margin-bottom: 60px;
+        .coming-soon-text {
+            font-size: 48px;
+            font-weight: 800;
+            letter-spacing: 4px;
+            margin: 60px 0;
+            background: linear-gradient(45deg, #ba68c8, #9370db);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 30px rgba(186, 104, 200, 0.3);
+            animation: pulse 2s infinite alternate;
         }
-        .grid-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 40px;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-        .showcase-card {
-            background: rgba(255, 255, 255, 0.02);
-            border: 1px solid rgba(255, 255, 255, 0.06);
-            border-radius: 16px;
-            padding: 35px;
-            transition: 0.3s ease;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
-            text-decoration: none;
-            color: inherit;
-        }
-        .showcase-card:hover {
-            transform: translateY(-5px);
-            border-color: #ba68c8;
-            box-shadow: 0 10px 30px rgba(186, 104, 200, 0.15);
-        }
-        .card-icon-wrapper {
-            width: 90px;
-            height: 90px;
-            border-radius: 16px;
-            margin-bottom: 25px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: rgba(186, 104, 200, 0.05);
-            border: 1px solid rgba(186, 104, 200, 0.2);
-            box-shadow: 0 0 20px rgba(186, 104, 200, 0.15);
-        }
-        .card-icon-wrapper i {
-            font-size: 40px;
-            color: #ba68c8;
-            text-shadow: 0 0 10px rgba(186, 104, 200, 0.4);
-        }
-        .card-title {
-            font-size: 24px;
-            margin: 0 0 12px 0;
-            color: #ffffff;
-        }
-        .card-description {
-            font-size: 15px;
-            color: #a0a0a0;
-            line-height: 1.6;
-            margin-bottom: 30px;
-            flex-grow: 1;
-        }
-        .section-action-button {
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-            background: transparent;
-            color: #ba68c8;
-            border: 2px solid #ba68c8;
-            padding: 12px 30px;
-            font-size: 15px;
-            font-weight: bold;
-            text-transform: uppercase;
-            border-radius: 50px;
-            cursor: pointer;
-            text-decoration: none;
-            transition: 0.3s;
-            width: 100%;
-            max-width: 220px;
-            box-sizing: border-box;
-            justify-content: center;
-        }
-        .section-action-button i {
-            transition: transform 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
-        }
-        .showcase-card:hover .section-action-button {
-            background: #ba68c8;
-            color: #000;
-            box-shadow: 0 0 20px rgba(186, 104, 200, 0.4);
-        }
-        .showcase-card:hover .section-action-button i {
-            transform: translateY(3px);
+        @keyframes pulse {
+            from { transform: scale(0.98); opacity: 0.8; }
+            to { transform: scale(1.02); opacity: 1; }
         }
         footer {
             padding: 40px 6% 30px;
@@ -202,8 +127,9 @@
             }
             nav ul { gap: 20px; }
             nav a { font-size: 14px; }
-            .content-section { padding: 40px 4%; }
+            .content-section { padding: 60px 4%; }
             .section-title { font-size: 28px; }
+            .coming-soon-text { font-size: 32px; }
         }
     </style>
 </head>
@@ -229,21 +155,7 @@
     <main>
         <section class="content-section">
             <h1 class="section-title">Applications</h1>
-            <p class="section-subtitle">Explore tools and software built for performance and efficiency.</p>
-            
-            <div class="grid-container">
-                <a href="../zYigitt_Macro.exe" download class="showcase-card">
-                    <div class="card-icon-wrapper">
-                        <i class="fas fa-mouse-pointer"></i>
-                    </div>
-                    <h2 class="card-title">zYigitt Macro</h2>
-                    <p class="card-description">Macro.</p>
-
-                    <div class="section-action-button">
-                        Download <i class="fas fa-download"></i>
-                    </div>
-                </a>
-            </div>
+            <div class="coming-soon-text">COMING SOON</div>
         </section>
     </main>
 
