@@ -1,279 +1,159 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HakGame</title>
-    <link rel="icon" type="image/png" href="hakgame.png">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        body {
-            margin: 0;
-            padding: 0;
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            background-color: #0c0814;
-            color: #ffffff;
-            overflow-x: hidden;
-            scroll-behavior: smooth;
-        }
-        .neon-bg-effects {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            z-index: -2;
-            pointer-events: none;
-            background: 
-                radial-gradient(circle at 15% 25%, rgba(186, 104, 200, 0.1) 0%, transparent 40%),
-                radial-gradient(circle at 85% 75%, rgba(147, 112, 219, 0.1) 0%, transparent 40%);
-        }
-        header {
-            position: sticky;
-            top: 0;
-            padding: 20px 6%;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: rgba(12, 8, 20, 0.9);
-            backdrop-filter: blur(10px);
-            z-index: 1000;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-            flex-direction: row-reverse;
-        }
-        .logo-container {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-        .studio-logo {
-            width: 45px;
-            height: auto;
-            border-radius: 8px;
-            box-shadow: 0 0 15px rgba(186, 104, 200, 0.4);
-        }
-        .studio-name {
-            font-size: 26px;
-            font-weight: 800;
-            letter-spacing: 2px;
-            background: linear-gradient(to right, #ba68c8, #9370db);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-        nav {
-            display: flex;
-            align-items: center;
-            gap: 30px;
-        }
-        nav ul { display: flex; list-style: none; gap: 35px; margin: 0; padding: 0; }
-        nav a {
-            color: #a0a0a0;
-            text-decoration: none;
-            font-size: 15px;
-            font-weight: 600;
-            transition: 0.3s;
-        }
-        nav a:hover {
-            color: #ba68c8;
-            text-shadow: 0 0 8px rgba(186, 104, 200, 0.6);
-        }
-        .hero {
-            height: 80vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            padding: 0 6%;
-        }
-        .hero-title {
-            font-size: 60px;
-            font-weight: 900;
-            margin-bottom: 20px;
-            background: linear-gradient(135deg, #fff 60%, #ba68c8);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-        .hero-subtitle {
-            font-size: 18px;
-            color: #a0a0a0;
-            max-width: 650px;
-            line-height: 1.6;
-            margin-bottom: 40px;
-        }
-        .cta-button {
-            background: linear-gradient(135deg, #ba68c8, #9370db);
-            color: #000;
-            border: none;
-            padding: 16px 40px;
-            font-size: 16px;
-            font-weight: bold;
-            text-transform: uppercase;
-            border-radius: 4px;
-            cursor: pointer;
-            transition: 0.3s;
-        }
-        .cta-button:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 25px rgba(186, 104, 200, 0.5);
-        }
-        .content-section {
-            padding: 100px 6%;
-            border-top: 1px solid rgba(255, 255, 255, 0.06);
-            text-align: center;
-        }
-        .section-title {
-            font-size: 32px;
-            text-align: center;
-            margin-bottom: 60px;
-            position: relative;
-        }
-        .coming-soon-text {
-            font-size: 48px;
-            font-weight: 800;
-            letter-spacing: 4px;
-            margin: 40px 0;
-            background: linear-gradient(45deg, #ba68c8, #9370db);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            text-shadow: 0 0 30px rgba(186, 104, 200, 0.3);
-            animation: pulse 2s infinite alternate;
-        }
-        @keyframes pulse {
-            from { transform: scale(0.98); opacity: 0.8; }
-            to { transform: scale(1.02); opacity: 1; }
-        }
-        .profiles-section {
-            padding: 100px 6%;
-            border-top: 1px solid rgba(255, 255, 255, 0.06);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-        .linktree-container {
-            width: 100%;
-            max-width: 550px;
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
-        }
-        .social-link {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.06);
-            padding: 18px 25px;
-            border-radius: 50px;
-            color: #ffffff;
-            text-decoration: none;
-            font-size: 16px;
-            font-weight: 600;
-            transition: all 0.3s ease;
-        }
-        .social-link i {
-            font-size: 20px;
-            width: 30px;
-        }
-        .social-link .arrow-icon {
-            font-size: 14px;
-            color: #a0a0a0;
-            transition: transform 0.3s;
-        }
-        .social-link:hover {
-            transform: scale(1.02);
-            background: rgba(255, 255, 255, 0.06);
-        }
-        .social-link.instagram:hover { border-color: #e1306c; box-shadow: 0 0 15px rgba(225, 48, 108, 0.3); }
-        .social-link.discord:hover { border-color: #5865f2; box-shadow: 0 0 15px rgba(88, 101, 242, 0.3); }
-        .social-link.github:hover { border-color: #fff; box-shadow: 0 0 15px rgba(255, 255, 255, 0.2); }
-        .social-link.steam:hover { border-color: #1b2838; box-shadow: 0 0 15px rgba(27, 40, 56, 0.5); }
-        .social-link:hover .arrow-icon {
-            transform: translateX(5px);
-            color: #fff;
-        }
-        footer {
-            padding: 60px 6% 30px;
-            text-align: center;
-            border-top: 1px solid rgba(255, 255, 255, 0.06);
-        }
-        .copyright-text {
-            color: #666;
-            font-size: 14px;
-            letter-spacing: 1px;
-        }
-        @media (max-width: 768px) {
-            header {
-                flex-direction: column;
-                gap: 15px;
-                padding: 15px 4%;
-            }
-            nav ul { gap: 20px; }
-            nav a { font-size: 14px; }
-            .hero-title { font-size: 38px; }
-            .hero-subtitle { font-size: 15px; margin-bottom: 30px; }
-            .coming-soon-text { font-size: 32px; }
-            .content-section, .profiles-section { padding: 60px 4%; }
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HakGame</title>
+  <meta name="description" content="HakGame — modern desktop apps and developer tools: English Learn and HakCode.">
+  <meta name="theme-color" content="#070d1a">
+  <link rel="icon" type="image/png" href="hakgame.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <div class="neon-bg-effects"></div>
+  <div class="progress" id="progress"></div>
+  <div class="bg" aria-hidden="true">
+    <span class="orb orb-1"></span>
+    <span class="orb orb-2"></span>
+    <span class="orb orb-3"></span>
+  </div>
 
-    <header>
-        <div class="logo-container">
-            <img src="hakgame.png" alt="Hakgame Logo" class="studio-logo">
-            <span class="studio-name">HAKGAME</span>
+  <header class="nav" id="nav">
+    <div class="container nav-inner">
+      <a href="#top" class="brand">
+        <img src="hakgame.png" alt="HakGame logo">
+        <span class="brand-text">Hak<b>Game</b></span>
+      </a>
+      <nav class="nav-links">
+        <a href="#apps">Apps</a>
+        <a href="#contact" class="cta">Contact me</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="top">
+
+    <section class="hero">
+      <div class="container">
+        <div class="badge reveal"><i></i> Building modern software</div>
+        <h1 class="reveal">Simple tools,<br><em>built to be fast.</em></h1>
+        <p class="reveal">I'm HakGame. I make clean, performance-focused apps for your desktop and your editor.</p>
+        <div class="btn-row reveal">
+          <a href="#apps" class="btn btn-primary"><i class="fa-solid fa-table-cells-large"></i> Explore apps</a>
+          <a href="#contact" class="btn btn-ghost"><i class="fa-regular fa-envelope"></i> Contact me</a>
         </div>
-        <nav>
-            <ul>
-                <li><a href="#home">Home</a></li>
-                <li><a href="#games">Games</a></li>
-                <li><a href="#apps">Apps</a></li>
-                <li><a href="#profiles">My Profiles</a></li>
-            </ul>
-        </nav>
-    </header>
+      </div>
+    </section>
 
-    <main>
-        <section id="home" class="hero">
-            <h1 class="hero-title">Shaping the Future of Internet</h1>
-            <p class="hero-subtitle">As Hakgame, we are here to provide our players with the highest quality of entertainment and competition.</p>
-            <button class="cta-button" onclick="document.getElementById('games').scrollIntoView({behavior: 'smooth'});">Explore Games</button>
-        </section>
+    <section id="apps">
+      <div class="container">
+        <div class="section-head reveal">
+          <h2>Apps</h2>
+          <p>What I'm building right now.</p>
+        </div>
 
-        <section id="games" class="content-section">
-            <h2 class="section-title">Our Games</h2>
-            <div class="coming-soon-text">COMING SOON</div>
-        </section>
-
-        <section id="apps" class="content-section">
-            <h2 class="section-title">Our Applications</h2>
-            <div class="coming-soon-text">COMING SOON</div>
-        </section>
-
-        <section id="profiles" class="profiles-section">
-            <h2 class="section-title">My Profiles</h2>
-            <div class="linktree-container">
-                <a href="https://instagram.com/zyigitt0" target="_blank" class="social-link instagram">
-                    <span><i class="fab fa-instagram"></i> Instagram</span>
-                    <i class="fas fa-chevron-right arrow-icon"></i>
-                </a>
-
-                <a href="https://discord.com/users/1336357374134583348" target="_blank" class="social-link discord">
-                    <span><i class="fab fa-discord"></i> Discord</span>
-                    <i class="fas fa-chevron-right arrow-icon"></i>
-                </a>
-
-                <a href="https://github.com/zyigitt0" target="_blank" class="social-link github">
-                    <span><i class="fab fa-github"></i> GitHub</span>
-                    <i class="fas fa-chevron-right arrow-icon"></i>
-                </a>
+        <div class="grid">
+          <article class="card reveal">
+            <div class="icon"><i class="fa-solid fa-book-open-reader"></i></div>
+            <h3>English Learn</h3>
+            <p>A desktop app that helps you learn English vocabulary by showing words on your screen while you work, with levels from A1 to C2.</p>
+            <div class="tags">
+              <span>Desktop</span>
+              <span>Windows</span>
+              <span>Vocabulary</span>
             </div>
-        </section>
-    </main>
+          </article>
 
-    <footer>
-        <p class="copyright-text">© 2026 HakGame All Rights Reserved.</p>
-    </footer>
+          <article class="card reveal">
+            <div class="icon"><i class="fa-solid fa-code"></i></div>
+            <h3>HakCode</h3>
+            <p>An autonomous AI coding agent for VS Code that works with free AI models, so you can build faster without paying per request.</p>
+            <div class="tags">
+              <span>VS Code</span>
+              <span>AI Agent</span>
+              <span>TypeScript</span>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
 
+    <section id="contact" class="contact">
+      <div class="container">
+        <div class="section-head reveal">
+          <h2>Contact me</h2>
+          <p>Questions, support or feedback? Send me an email and I'll get back to you.</p>
+        </div>
+        <div class="reveal">
+          <a href="mailto:support@hakgame.com.tr" class="btn btn-primary">
+            <i class="fa-solid fa-paper-plane"></i> support@hakgame.com.tr
+          </a>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer>
+    <div class="container">
+      &copy; <span id="year">2026</span> HakGame All Rights Reserved
+    </div>
+  </footer>
+
+  <script>
+    document.getElementById("year").textContent = new Date().getFullYear();
+
+    const items =document.querySelectorAll(".reveal");
+    if ("IntersectionObserver" in window) {
+      const io = new IntersectionObserver((entries) => {
+        entries.forEach((e) => {
+          if (e.isIntersecting) {
+            e.target.classList.add("show");
+            setTimeout(() => { e.target.style.transitionDelay = ""; }, 1200);
+            io.unobserve(e.target);
+          }
+        });
+      }, { threshold: 0.12 });
+      items.forEach((el, i) => {
+        el.style.transitionDelay = (i % 4) * 120 + "ms";
+        io.observe(el);
+      });
+    } else {
+      items.forEach((el) => el.classList.add("show"));
+    }
+
+    const nav = document.getElementById("nav");
+    const progress = document.getElementById("progress");
+    const onScroll = () => {
+      const max = document.documentElement.scrollHeight - window.innerHeight;
+      progress.style.transform = "scaleX(" + (max > 0 ? window.scrollY / max : 0) + ")";
+      nav.classList.toggle("scrolled", window.scrollY > 20);
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    onScroll();
+
+    const canHover = window.matchMedia("(hover: hover)").matches;
+    if (canHover) {
+      document.querySelectorAll(".card").forEach((card) => {
+        card.addEventListener("mousemove", (ev) => {
+          const r = card.getBoundingClientRect();
+          const x = ev.clientX - r.left;
+          const y = ev.clientY - r.top;
+          card.style.setProperty("--mx", x + "px");
+          card.style.setProperty("--my", y + "px");
+          const rx = ((y / r.height) - 0.5) * -8;
+          const ry = ((x / r.width) - 0.5) * 8;
+          card.style.transform = "translateY(-5px) rotateX(" + rx + "deg) rotateY(" + ry + "deg)";
+        });
+        card.addEventListener("mouseleave", () => {
+          card.style.transform = "";
+        });
+      });
+    }
+  </script>
 </body>
 </html>
