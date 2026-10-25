@@ -1,28 +1,28 @@
-# Welcome to HakGame 👋
+# HakGame
 
-This is the source code for my personal developer website and studio page **HakGame**. I showcase my game development progress, app projects, and personal links here.
+Source code of the official HakGame website: https://hakgame.com.tr
 
----
+## What's inside
 
-**What's Inside**
+- **Apps:** English Learn and HakCode
+- **Contact:** support@hakgame.com.tr
 
-* **Games Section:** Updates on games I'm currently working on.
-* **Apps Section:** Fast, performance-focused utility tools.
-* **Profiles:** Direct links to my social accounts (Discord, GitHub, Steam, Instagram).
+## Tech stack
 
----
+- HTML5
+- CSS3 (custom properties, Grid/Flexbox, animations)
+- Font Awesome icons, Inter font
 
-**Tech Stack**
+## Project structure
 
-* **Frontend:** HTML5, CSS3 (Custom Flexbox/Grid layouts & Animations)
-* **Icons:** Font Awesome
+```
+├── index.html    Single-page site (Home, Apps, Contact)
+├── style.css     All styles (blue theme)
+├── hakgame.png   Logo
+├── CNAME         Custom domain
+└── LICENSE
+```
 
----
+## License
 
-**Project Structure**
-
-```text
-├── index.html        Main portal & profiles
-├── apps/
-│   └── index.html    Applications page
-└── hakgame.png       HakGame Logo
+MIT
