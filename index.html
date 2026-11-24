@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>HakGame</title>
-  <meta name="description" content="HakGame — modern desktop apps and developer tools: English Learn and HakCode.">
+  <meta name="description" content="HakGame — modern desktop apps: English Learn.">
   <meta name="theme-color" content="#070d1a">
   <link rel="icon" type="image/png" href="hakgame.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -29,8 +29,10 @@
         <span class="brand-text">Hak<b>Game</b></span>
       </a>
       <nav class="nav-links">
-        <a href="#apps">Apps</a>
-        <a href="#contact" class="cta">Contact me</a>
+        <a href="#apps" data-i18n="nav_apps">Apps</a>
+        <a href="#robrun" data-i18n="nav_robrun">Rob Run</a>
+        <a href="#contact" class="cta" data-i18n="nav_contact">Contact me</a>
+        <div class="langsw" id="langSw"><button data-lang="en">EN</button><button data-lang="tr">TR</button></div>
       </nav>
     </div>
   </header>
@@ -39,12 +41,12 @@
 
     <section class="hero">
       <div class="container">
-        <div class="badge reveal"><i></i> Building modern software</div>
-        <h1 class="reveal">Simple tools,<br><em>built to be fast.</em></h1>
-        <p class="reveal">I'm HakGame. I make clean, performance-focused apps for your desktop and your editor.</p>
+        <div class="badge reveal"><i></i> <span data-i18n="badge">Building modern software</span></div>
+        <h1 class="reveal" data-i18n-html="h1">Simple tools,<br><em>built to be fast.</em></h1>
+        <p class="reveal" data-i18n="hero_p">I'm HakGame. I make clean, performance-focused apps for your desktop and your editor.</p>
         <div class="btn-row reveal">
-          <a href="#apps" class="btn btn-primary"><i class="fa-solid fa-table-cells-large"></i> Explore apps</a>
-          <a href="#contact" class="btn btn-ghost"><i class="fa-regular fa-envelope"></i> Contact me</a>
+          <a href="#apps" class="btn btn-primary"><i class="fa-solid fa-table-cells-large"></i> <span data-i18n="btn_explore">Explore apps</span></a>
+          <a href="#contact" class="btn btn-ghost"><i class="fa-regular fa-envelope"></i> <span data-i18n="btn_contact">Contact me</span></a>
         </div>
       </div>
     </section>
@@ -52,41 +54,97 @@
     <section id="apps">
       <div class="container">
         <div class="section-head reveal">
-          <h2>Apps</h2>
-          <p>What I'm building right now.</p>
+          <h2 data-i18n="apps_h">Apps</h2>
+          <p data-i18n="apps_p">What I'm building right now.</p>
         </div>
 
         <div class="grid">
           <article class="card reveal">
             <div class="icon"><i class="fa-solid fa-book-open-reader"></i></div>
             <h3>English Learn</h3>
-            <p>A desktop app that helps you learn English vocabulary by showing words on your screen while you work, with levels from A1 to C2.</p>
+            <p data-i18n="el_p">A desktop app that helps you learn English vocabulary by showing words on your screen while you work, with levels from A1 to C2.</p>
             <div class="tags">
-              <span>Desktop</span>
-              <span>Windows</span>
-              <span>Vocabulary</span>
-            </div>
-          </article>
-
-          <article class="card reveal">
-            <div class="icon"><i class="fa-solid fa-code"></i></div>
-            <h3>HakCode</h3>
-            <p>An autonomous AI coding agent for VS Code that works with free AI models, so you can build faster without paying per request.</p>
-            <div class="tags">
-              <span>VS Code</span>
-              <span>AI Agent</span>
-              <span>TypeScript</span>
+              <span data-i18n="tag_desktop">Desktop</span>
+              <span data-i18n="tag_windows">Windows</span>
+              <span data-i18n="tag_vocab">Vocabulary</span>
             </div>
           </article>
         </div>
       </div>
     </section>
 
+    <section id="robrun">
+      <div class="container">
+        <div class="section-head reveal">
+          <h2 data-i18n="rr_h">Rob Run Guide</h2>
+          <p data-i18n="rr_p">Shipments (H menu) prices, weapon picks and farm planner.</p>
+        </div>
+
+        <div class="tabs reveal" id="tabs">
+          <button class="tab active" data-tab="planner"><i class="fa-solid fa-compass"></i> <span data-i18n="tab_planner">Planner</span></button>
+          <button class="tab" data-tab="shipments"><i class="fa-solid fa-list"></i> <span data-i18n="tab_ship">Shipments</span></button>
+          <button class="tab" data-tab="farms"><i class="fa-solid fa-seedling"></i> <span data-i18n="tab_farms">Farms</span></button>
+        </div>
+
+        <div class="panel" id="panel-planner">
+          <div class="planner-controls">
+            <div class="field">
+              <label data-i18n="lbl_style">Play style</label>
+              <div class="seg" id="styleSeg">
+                <button class="active" data-style="action" data-i18n="seg_action">Action</button>
+                <button data-style="calm" data-i18n="seg_calm">Calm</button>
+              </div>
+            </div>
+            <div class="field">
+              <label for="budget" data-i18n="lbl_cash">Your cash</label>
+              <div class="money"><span>$</span><input id="budget" type="number" min="0" step="1000" value="250000" inputmode="numeric"></div>
+              <div class="chips" id="chips">
+                <button data-v="50000">50K</button>
+                <button data-v="250000">250K</button>
+                <button data-v="1000000">1M</button>
+                <button data-v="5000000">5M</button>
+              </div>
+            </div>
+          </div>
+          <div id="planOut"></div>
+        </div>
+
+        <div class="panel" id="panel-shipments" hidden>
+          <div class="toolbar">
+            <input class="search" id="search" type="search" placeholder="Search items..." data-i18n-ph="ph_search" autocomplete="off">
+            <select class="select" id="tierSel">
+              <option value="" data-i18n="opt_all">All levels</option>
+              <option value="0" data-i18n="opt_0">Level 0</option>
+              <option value="1" data-i18n="opt_1">Level 1</option>
+              <option value="2" data-i18n="opt_2">Level 2</option>
+              <option value="3" data-i18n="opt_3">Level 3</option>
+            </select>
+          </div>
+          <div class="cats" id="cats"></div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr><th data-i18n="th_item">Item</th><th data-i18n="th_cat">Category</th><th data-i18n="th_lvl">Lvl</th><th data-i18n="th_research">Research</th><th data-i18n="th_buy">Buy</th><th data-i18n="th_req">Requires</th></tr>
+              </thead>
+              <tbody id="rows"></tbody>
+            </table>
+          </div>
+          <p class="count" id="count"></p>
+        </div>
+
+        <div class="panel" id="panel-farms" hidden>
+          <div class="farm-grid" id="farmGrid"></div>
+        </div>
+
+        <p class="note" data-i18n="note">Community-sourced data (Nov 2026), may change with patches. Research is paid once to unlock, buy is paid per item. Mk2/Mk3 buy price equals Mk1. Level = settlement level. A base and plot are needed for farms and not counted. The Federal Raid wipes bases and cash 7 days after a server opens.</p>
+      </div>
+    </section>
+
     <section id="contact" class="contact">
       <div class="container">
         <div class="section-head reveal">
-          <h2>Contact me</h2>
-          <p>Questions, support or feedback? Send me an email and I'll get back to you.</p>
+          <h2 data-i18n="contact_h">Contact me</h2>
+          <p data-i18n="contact_p">Questions, support or feedback? Send me an email and I'll get back to you.</p>
         </div>
         <div class="reveal">
           <a href="mailto:support@hakgame.com.tr" class="btn btn-primary">
@@ -100,7 +158,7 @@
 
   <footer>
     <div class="container">
-      &copy; <span id="year">2026</span> HakGame All Rights Reserved
+      &copy; <span id="year">2026</span> HakGame <span data-i18n="rights">All Rights Reserved</span>
     </div>
   </footer>
 
@@ -155,5 +213,8 @@
       });
     }
   </script>
+  <script src="en.js"></script>
+  <script src="tr.js"></script>
+  <script src="robrun.js"></script>
 </body>
 </html>
