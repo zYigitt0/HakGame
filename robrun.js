@@ -184,6 +184,7 @@ T|Police Radio (Epic)|2|25000|10000||60
     lang = browserTr() ? "tr" : "en";
   }
 
+  const has = (k) => DICT[lang][k] !== undefined || DICT.en[k] !== undefined;
   const t = (k, v) => {
     let s = DICT[lang][k] !== undefined ? DICT[lang][k] : DICT.en[k];
     if (v) Object.keys(v).forEach((x) => { s = s.split("{" + x + "}").join(v[x]); });
@@ -191,6 +192,12 @@ T|Police Radio (Epic)|2|25000|10000||60
   };
   const num = (n) => n.toLocaleString(lang === "tr" ? "tr-TR" : "en-US");
   const fmt = (n) => n === null ? "-" : n === 0 ? t("free") : "$" + num(n);
+  const trimNum = (x) => {
+    const s = String(Math.round(x * 10) / 10);
+    return lang === "tr" ? s.replace(".", ",") : s;
+  };
+  const short = (n) => n === 0 ? t("free") : n >= 1000000 ? "$" + trimNum(n / 1000000) + "M" : n >= 1000 ? "$" + trimNum(n / 1000) + "K" : "$" + n;
+  const lbl = (n) => has("lbl_" + n) ? t("lbl_" + n) : n;
 
   const CAT_KEYS = ["W", "V", "D", "P", "F", "K", "G", "T"];
 
@@ -201,31 +208,40 @@ T|Police Radio (Epic)|2|25000|10000||60
     "DP-9": ["Pistol", "C"], "LBR-44": ["Revolver", "C"]
   };
 
+  const ARMORS = ["Heavy Body Armor", "Assault Body Armor", "Medium Body Armor", "Light Body Armor"];
+
   const FARMS = [
     {
       key: "weed", icon: "fa-seedling",
-      setup: [["Grow Room", 150000, 100000], ["Grow Table (6 plants, max 6 per room)", 30000, 40000, "Grow Table (6 bitki, odada en fazla 6 tane)"]],
-      extras: [["Fan (+12% growth)", 100000, 25000, "Fan (+%12 büyüme)"], ["Water Pump (+14%)", 200000, 70000, "Water Pump (+%14)"], ["UV Lamp (+24%)", 500000, 250000, "UV Lamp (+%24)"]]
+      setup: ["Grow Room", "Grow Table"],
+      extras: ["Fan", "Water Pump", "UV Lamp"]
     },
     {
       key: "chem", icon: "fa-flask",
-      setup: [["Chemical Laboratory", 160000, 110000], ["Chemical Reactor I", 20000, 40000], ["Industrial Freezer I", 15000, 20000]],
-      extras: [["Lab Table (crush to powder)", 10000, 15000, "Lab Table (toza öğütme)"], ["Industrial Engine", 10000, 20000], ["Industrial Thermometer", 50000, 120000], ["Improved Evaporator", 40000, 100000]]
+      setup: ["Chemical Laboratory", "Chemical Reactor (Uncommon)", "Industrial Freezer (Uncommon)"],
+      extras: ["Lab Table", "Industrial Engine", "Industrial Thermometer", "Improved Evaporator"]
     },
     {
       key: "cargo", icon: "fa-box-open",
-      setup: [["Contraband Workbench", 20000, 20000]],
-      extras: [["Label Printer (+15% speed)", 15000, 30000, "Label Printer (+%15 hız)"], ["Tool Box (+1 slot)", 150000, 200000]]
+      setup: ["Contraband Workbench"],
+      extras: ["Label Printer (Uncommon)", "Tool Box (Epic)"]
     }
   ];
 
-  const farmName = (f) => t("farm_" + f.key);
-  const rowLabel = (r) => lang === "tr" && r[3] ? r[3] : r[0];
+  const CALM_PATH = [
+    ["ps_bench", ["Contraband Workbench"]],
+    ["ps_weed", ["Grow Room", "Grow Table"]],
+    ["ps_fan", ["Fan"]],
+    ["ps_pump", ["Water Pump"]],
+    ["ps_chem", ["Chemical Laboratory", "Chemical Reactor (Uncommon)", "Industrial Freezer (Uncommon)"]],
+    ["ps_uv", ["UV Lamp"]],
+    ["ps_label", ["Label Printer (Uncommon)"]],
+    ["ps_tool", ["Tool Box (Epic)"]]
+  ];
 
-  const RAW_ROWS = RAW.trim().split("\n");
-  const goods = RAW_ROWS.map((l) => {
+  const goods = RAW.trim().split("\n").map((l, idx) => {
     const p = l.split("|");
-    return { c: p[0], n: p[1], t: +p[2], r: +p[3], b: p[4] === "-" ? null : +p[4], p: p[5] || "", j: p[6] ? +p[6] : 0 };
+    return { i: idx, c: p[0], n: p[1], t: +p[2], r: +p[3], b: p[4] === "-" ? null : +p[4], p: p[5] || "", j: p[6] ? +p[6] : 0 };
   });
   const byName = {};
   goods.forEach((i) => { byName[i.n] = i; });
@@ -234,6 +250,40 @@ T|Police Radio (Epic)|2|25000|10000||60
       i.b = byName[i.n.replace(/ Mk\d$/, " Mk1")].b;
     }
   });
+
+  const kids = {};
+  goods.forEach((g) => {
+    const par = byName[g.p] ? g.p : "";
+    (kids[par] = kids[par] || []).push(g);
+  });
+
+  const chainOf = (g) => {
+    const arr = [];
+    let cur = g;
+    while (cur) {
+      arr.unshift(cur);
+      cur = byName[cur.p] || null;
+    }
+    return arr;
+  };
+
+  const descendantsOf = (g) => {
+    const out = [];
+    const walk = (n) => (kids[n.n] || []).forEach((c) => { out.push(c); walk(c); });
+    walk(g);
+    return out;
+  };
+
+  let owned = new Set();
+  try {
+    const raw = JSON.parse(localStorage.getItem("rr_owned") || "[]");
+    raw.forEach((n) => { if (byName[n]) owned.add(n); });
+  } catch (e) {
+    owned = new Set();
+  }
+  const saveOwned = () => {
+    try { localStorage.setItem("rr_owned", JSON.stringify(Array.from(owned))); } catch (e) {}
+  };
 
   const tabs = document.querySelectorAll("#tabs .tab");
   tabs.forEach((btn) => {
@@ -250,7 +300,11 @@ T|Police Radio (Epic)|2|25000|10000||60
   const searchEl = document.getElementById("search");
   const tierEl = document.getElementById("tierSel");
   const catsEl = document.getElementById("cats");
+  const menuCatsEl = document.getElementById("menuCats");
+  const treeEl = document.getElementById("tree");
+  const ownedCountEl = document.getElementById("ownedCount");
   let activeCat = "";
+  let menuCat = "W";
 
   function buildCats() {
     catsEl.innerHTML = "";
@@ -264,6 +318,21 @@ T|Police Radio (Epic)|2|25000|10000||60
         renderRows();
       });
       catsEl.appendChild(b);
+    });
+  }
+
+  function buildMenuCats() {
+    menuCatsEl.innerHTML = "";
+    CAT_KEYS.forEach((k) => {
+      const b = document.createElement("button");
+      b.className = "catbtn" + (k === menuCat ? " active" : "");
+      b.textContent = t("cat_" + k);
+      b.addEventListener("click", () => {
+        menuCat = k;
+        menuCatsEl.querySelectorAll(".catbtn").forEach((x) => x.classList.toggle("active", x === b));
+        renderTree();
+      });
+      menuCatsEl.appendChild(b);
     });
   }
 
@@ -291,79 +360,193 @@ T|Police Radio (Epic)|2|25000|10000||60
   searchEl.addEventListener("input", renderRows);
   tierEl.addEventListener("change", renderRows);
 
+  function nodeHtml(g) {
+    const st = owned.has(g.n) ? "own" : (!g.p || owned.has(g.p) ? "avail" : "lock");
+    const jail = g.j ? "<em>" + num(g.j) + " " + t("jail") + "</em>" : "";
+    const title = g.n + " | " + t("th_research") + " " + fmt(g.r) + " | " + t("th_buy") + " " + fmt(g.b) + " | " + t("th_lvl") + " " + g.t;
+    const ch = kids[g.n] || [];
+    return "<div class=\"tn\"><button class=\"node " + st + "\" data-i=\"" + g.i + "\" title=\"" + title.replace(/"/g, "&quot;") + "\"><b>" + g.n + "</b><span>" +
+      short(g.r) + " &middot; " + short(g.b) + "</span>" + jail + "</button>" +
+      (ch.length ? "<div class=\"kids\">" + ch.map(nodeHtml).join("") + "</div>" : "") + "</div>";
+  }
+
+  function renderTree() {
+    const roots = goods.filter((g) => g.c === menuCat && !byName[g.p]);
+    treeEl.innerHTML = "<div class=\"roots\">" + roots.map(nodeHtml).join("") + "</div>";
+  }
+
+  function renderOwnedCount() {
+    ownedCountEl.textContent = t("owned_count", { n: owned.size });
+    document.getElementById("planOwned").textContent = t("owned_info", { n: owned.size });
+  }
+
+  treeEl.addEventListener("click", (ev) => {
+    const btn = ev.target.closest(".node");
+    if (!btn) return;
+    const g = goods[+btn.dataset.i];
+    if (owned.has(g.n)) {
+      owned.delete(g.n);
+      descendantsOf(g).forEach((d) => owned.delete(d.n));
+    } else {
+      chainOf(g).forEach((a) => owned.add(a.n));
+    }
+    saveOwned();
+    renderTree();
+    renderOwnedCount();
+    renderPlan();
+  });
+
+  document.getElementById("resetOwned").addEventListener("click", () => {
+    owned = new Set();
+    saveOwned();
+    renderTree();
+    renderOwnedCount();
+    renderPlan();
+  });
+
+  document.querySelectorAll("#viewSeg button").forEach((b) => {
+    b.addEventListener("click", () => {
+      document.querySelectorAll("#viewSeg button").forEach((x) => x.classList.toggle("active", x === b));
+      document.getElementById("view-menu").hidden = b.dataset.view !== "menu";
+      document.getElementById("view-list").hidden = b.dataset.view !== "list";
+    });
+  });
+
   const budgetEl = document.getElementById("budget");
+  const jailEl = document.getElementById("jail");
+  const levelEl = document.getElementById("level");
   const planOut = document.getElementById("planOut");
   let style = "action";
 
-  const families = goods.filter((i) => i.c === "W" && / Mk1$/.test(i.n)).map((m1) => {
-    const base = m1.n.replace(/ Mk1$/, "");
-    let cur = m1, research = 0, lvl = 0;
-    while (cur) {
-      research += cur.r;
-      lvl = Math.max(lvl, cur.t);
-      cur = byName[cur.p] || null;
-    }
-    const m2 = byName[base + " Mk2"], m3 = byName[base + " Mk3"];
-    const upg = (m2 ? m2.r : 0) + (m3 ? m3.r : 0);
-    const meta = WEAPON_META[base];
-    return { base: base, type: meta[0], rank: meta[1], lvl: lvl, buy: m1.b, research: research, total: research + m1.b, jail: m1.j, upg: upg };
+  const limits = () => ({
+    budget: Math.max(0, Number(budgetEl.value) || 0),
+    jail: Math.max(0, Number(jailEl.value) || 0),
+    level: Number(levelEl.value)
   });
+
+  function needOf(g, lim) {
+    const todo = chainOf(g).filter((x) => !owned.has(x.n));
+    const research = todo.reduce((s, x) => s + x.r, 0);
+    const lvl = todo.reduce((m, x) => Math.max(m, x.t), 0);
+    const jail = todo.reduce((m, x) => Math.max(m, x.j), 0);
+    return { todo: todo, research: research, lvl: lvl, jail: jail, blockedLevel: lvl > lim.level, blockedJail: jail > lim.jail };
+  }
+
   const RANK = { S: 0, A: 1, B: 2, C: 3 };
 
-  function actionPlan(budget) {
-    const sorted = families.slice().sort((a, b) => RANK[a.rank] - RANK[b.rank] || a.total - b.total);
-    const ok = sorted.filter((f) => !f.jail && f.total <= budget);
-    let head;
+  function statusTag(need, total, budget) {
+    if (need.blockedJail) return "<span class=\"tag warn\">" + num(need.jail) + " " + t("jail") + "</span>";
+    if (need.blockedLevel) return "<span class=\"tag warn\">" + t("need_level", { n: need.lvl }) + "</span>";
+    if (total <= budget) return "<span class=\"tag ok\">" + t("affordable") + "</span>";
+    return "<span class=\"tag no\">" + t("need", { x: fmt(total - budget) }) + "</span>";
+  }
+
+  function pathTable(steps, budget) {
+    let run = 0;
+    const rows = steps.map((s, idx) => {
+      run += s.cost;
+      let status;
+      if (s.warn) status = "<span class=\"tag warn\">" + s.warn + "</span>";
+      else if (run <= budget) status = "<span class=\"tag ok\">" + t("affordable") + "</span>";
+      else status = "<span class=\"tag no\">" + t("need", { x: fmt(run - budget) }) + "</span>";
+      return "<tr><td>" + (idx + 1) + "</td><td>" + s.text + "</td><td class=\"num\">" + fmt(s.cost) + "</td><td class=\"num\">" + fmt(run) + "</td><td>" + status + "</td></tr>";
+    }).join("");
+    return "<h4 class=\"sub\">" + t("path_title") + "</h4><div class=\"table-wrap\"><table><thead><tr><th>#</th><th>" + t("th_stepn") + "</th><th>" + t("th_cost") + "</th><th>" + t("th_run") + "</th><th>" + t("th_status") + "</th></tr></thead><tbody>" + rows + "</tbody></table></div>";
+  }
+
+  function unlockSteps(need, buyItem, lim) {
+    const steps = need.todo.map((x) => ({
+      text: t("step_unlock", { x: x.n }),
+      cost: x.r,
+      warn: x.t > lim.level ? t("need_level", { n: x.t }) : (x.j > lim.jail ? num(x.j) + " " + t("jail") : "")
+    }));
+    if (buyItem) steps.push({ text: t("step_buy", { x: buyItem.n }), cost: buyItem.b, warn: "" });
+    return steps;
+  }
+
+  function actionPlan(lim) {
+    const fams = goods.filter((i) => i.c === "W" && / Mk1$/.test(i.n)).map((m1) => {
+      const base = m1.n.replace(/ Mk1$/, "");
+      const need = needOf(m1, lim);
+      const meta = WEAPON_META[base];
+      return { base: base, m1: m1, type: meta[0], rank: meta[1], need: need, buy: m1.b, total: need.research + m1.b };
+    });
+    const open = fams.filter((f) => !f.need.blockedLevel && !f.need.blockedJail);
+    const sorted = fams.slice().sort((a, b) => RANK[a.rank] - RANK[b.rank] || a.total - b.total);
+    const ok = open.filter((f) => f.total <= lim.budget).sort((a, b) => RANK[a.rank] - RANK[b.rank] || a.total - b.total);
+    let head = "";
+    let steps = [];
     if (ok.length) {
       const best = ok[0];
-      head = "<div class=\"pick\"><small>" + t("best_for", { x: fmt(budget) }) + "</small><h3>" + best.base + " <span class=\"tag\">" + t("tier", { r: best.rank }) + "</span></h3><p>" +
-        t("action_text", { type: t(best.type), r: fmt(best.research), b: fmt(best.buy), t: "<b>" + fmt(best.total) + "</b>", l: best.lvl }) +
-        (best.upg ? t("action_upg", { u: fmt(best.upg) }) : "") + "</p></div>";
+      head = "<div class=\"pick\"><small>" + t("best_for", { x: fmt(lim.budget) }) + "</small><h3>" + best.base + " <span class=\"tag\">" + t("tier", { r: best.rank }) + "</span></h3><p>" +
+        t("action_text", { type: t(best.type), r: fmt(best.need.research), b: fmt(best.buy), t: "<b>" + fmt(best.total) + "</b>" }) +
+        (best.need.lvl > 0 ? t("action_level", { l: best.need.lvl }) : "") + "</p></div>";
+      steps = unlockSteps(best.need, best.m1, lim);
+      let left = lim.budget - best.total;
+      const m2 = byName[best.base + " Mk2"];
+      if (m2 && !owned.has(m2.n) && m2.r <= left && m2.t <= lim.level && m2.j <= lim.jail) {
+        steps.push({ text: t("step_mk2", { x: m2.n }), cost: m2.r, warn: "" });
+        left -= m2.r;
+      }
+      for (let k = 0; k < ARMORS.length; k++) {
+        const a = byName[ARMORS[k]];
+        const an = needOf(a, lim);
+        const cost = an.research + a.b;
+        if (!an.blockedLevel && !an.blockedJail && cost <= left) {
+          steps = steps.concat(unlockSteps(an, a, lim));
+          break;
+        }
+      }
+    } else if (open.length) {
+      const next = open.slice().sort((a, b) => a.total - b.total)[0];
+      head = "<div class=\"pick\"><small>" + t("not_enough") + "</small><h3>" + t("cheapest", { x: next.base }) + "</h3><p>" + t("need_more", { x: fmt(next.total - lim.budget), t: fmt(next.total) }) + "</p></div>";
+      steps = unlockSteps(next.need, next.m1, lim);
     } else {
-      const next = sorted.filter((f) => !f.jail).sort((a, b) => a.total - b.total)[0];
-      head = "<div class=\"pick\"><small>" + t("not_enough") + "</small><h3>" + t("cheapest", { x: next.base }) + "</h3><p>" + t("need_more", { x: fmt(next.total - budget), t: fmt(next.total) }) + "</p></div>";
+      head = "<div class=\"pick\"><small>" + t("not_enough") + "</small><h3>" + t("none_available") + "</h3></div>";
     }
-    const rows = sorted.map((f) => {
-      let status;
-      if (f.jail) status = "<span class=\"tag warn\">" + num(f.jail) + " " + t("jail") + "</span>";
-      else if (f.total <= budget) status = "<span class=\"tag ok\">" + t("affordable") + "</span>";
-      else status = "<span class=\"tag no\">" + t("need", { x: fmt(f.total - budget) }) + "</span>";
-      return "<tr><td>" + f.base + "</td><td>" + t(f.type) + "</td><td><span class=\"tag\">" + f.rank + "</span></td><td>" + f.lvl +
-        "</td><td class=\"num\">" + fmt(f.research) + "</td><td class=\"num\">" + fmt(f.buy) + "</td><td class=\"num\">" + fmt(f.total) + "</td><td>" + status + "</td></tr>";
-    }).join("");
-    return head + "<div class=\"table-wrap\"><table><thead><tr><th>" + t("p_weapon") + "</th><th>" + t("p_type") + "</th><th>" + t("p_tier") + "</th><th>" + t("p_lvl") +
+    const rows = sorted.map((f) =>
+      "<tr><td>" + f.base + "</td><td>" + t(f.type) + "</td><td><span class=\"tag\">" + f.rank + "</span></td><td>" + Math.max(f.need.lvl, 0) +
+      "</td><td class=\"num\">" + fmt(f.need.research) + "</td><td class=\"num\">" + fmt(f.buy) + "</td><td class=\"num\">" + fmt(f.total) + "</td><td>" + statusTag(f.need, f.total, lim.budget) + "</td></tr>"
+    ).join("");
+    return head + (steps.length ? pathTable(steps, lim.budget) : "") +
+      "<h4 class=\"sub\">" + t("p_weapon") + "</h4><div class=\"table-wrap\"><table><thead><tr><th>" + t("p_weapon") + "</th><th>" + t("p_type") + "</th><th>" + t("p_tier") + "</th><th>" + t("p_lvl") +
       "</th><th>" + t("p_chain") + "</th><th>" + t("p_buy") + "</th><th>" + t("p_total") + "</th><th>" + t("p_status") + "</th></tr></thead><tbody>" + rows + "</tbody></table></div>";
   }
 
-  const farmCost = (rows) => rows.reduce((s, r) => s + r[1] + r[2], 0);
-
-  function calmPlan(budget) {
-    const withCost = FARMS.map((f) => Object.assign({ cost: farmCost(f.setup) }, f));
-    const ok = withCost.filter((f) => f.cost <= budget).sort((a, b) => a.cost - b.cost);
-    let head;
-    if (ok.length) {
-      head = "<div class=\"pick\"><small>" + t("start_with", { x: fmt(budget) }) + "</small><h3>" + ok.map(farmName).join(", ") + "</h3><p>" +
-        ok.map((f) => t("farm_line", { name: farmName(f), cost: fmt(f.cost), h: t("na") })).join(". ") + ".</p></div>";
-    } else {
-      const cheapest = withCost.slice().sort((a, b) => a.cost - b.cost)[0];
-      head = "<div class=\"pick\"><small>" + t("not_enough") + "</small><h3>" + t("first_goal", { x: farmName(cheapest) }) + "</h3><p>" + t("need_setup", { x: fmt(cheapest.cost - budget), c: fmt(cheapest.cost) }) + "</p></div>";
-    }
-    const steps = [];
-    FARMS.forEach((f) => {
-      steps.push([t("setup_of", { name: farmName(f) }), farmCost(f.setup)]);
-      f.extras.forEach((e) => steps.push([farmName(f) + ": " + rowLabel(e), e[1] + e[2]]));
+  function calmPlan(lim) {
+    const virtual = new Set(owned);
+    const steps = CALM_PATH.map((entry) => {
+      let cost = 0;
+      let lvl = 0;
+      entry[1].forEach((n) => {
+        const g = byName[n];
+        if (!virtual.has(n)) {
+          cost += g.r;
+          lvl = Math.max(lvl, g.t);
+          virtual.add(n);
+        }
+        cost += g.b;
+      });
+      return { text: t(entry[0]), cost: cost, warn: lvl > lim.level ? t("need_level", { n: lvl }) : "" };
     });
-    steps.sort((a, b) => a[1] - b[1]);
-    const rows = steps.map((s) =>
-      "<tr><td>" + s[0] + "</td><td class=\"num\">" + fmt(s[1]) + "</td><td>" +
-      (s[1] <= budget ? "<span class=\"tag ok\">" + t("affordable") + "</span>" : "<span class=\"tag no\">" + t("need", { x: fmt(s[1] - budget) }) + "</span>") + "</td></tr>"
-    ).join("");
-    return head + "<div class=\"table-wrap\"><table><thead><tr><th>" + t("th_step") + "</th><th>" + t("th_cost") + "</th><th>" + t("th_status") + "</th></tr></thead><tbody>" + rows + "</tbody></table></div>";
+    let run = 0;
+    let afford = 0;
+    steps.forEach((s) => {
+      run += s.cost;
+      if (run <= lim.budget) afford += 1;
+    });
+    let head;
+    if (afford > 0) {
+      head = "<div class=\"pick\"><small>" + t("start_with", { x: fmt(lim.budget) }) + "</small><h3>" + t("calm_head", { n: afford, m: steps.length }) + "</h3><p>" + steps.slice(0, afford).map((s) => s.text).join(" &rarr; ") + "</p></div>";
+    } else {
+      head = "<div class=\"pick\"><small>" + t("not_enough") + "</small><h3>" + t("first_goal", { x: steps[0].text }) + "</h3><p>" + t("need_setup", { x: fmt(steps[0].cost - lim.budget), c: fmt(steps[0].cost) }) + "</p></div>";
+    }
+    return head + pathTable(steps, lim.budget);
   }
 
   function renderPlan() {
-    const budget = Math.max(0, Number(budgetEl.value) || 0);
-    planOut.innerHTML = style === "action" ? actionPlan(budget) : calmPlan(budget);
+    const lim = limits();
+    planOut.innerHTML = style === "action" ? actionPlan(lim) : calmPlan(lim);
   }
 
   document.querySelectorAll("#styleSeg button").forEach((b) => {
@@ -380,11 +563,16 @@ T|Police Radio (Epic)|2|25000|10000||60
     });
   });
   budgetEl.addEventListener("input", renderPlan);
+  jailEl.addEventListener("input", renderPlan);
+  levelEl.addEventListener("change", renderPlan);
+
+  const itemCost = (n) => byName[n].r + byName[n].b;
+  const farmCost = (names) => names.reduce((s, n) => s + itemCost(n), 0);
 
   function renderFarms() {
     document.getElementById("farmGrid").innerHTML = FARMS.map((f) => {
-      const list = (rows) => "<ul>" + rows.map((r) => "<li><span>" + rowLabel(r) + "</span><span>" + fmt(r[1] + r[2]) + "</span></li>").join("") + "</ul>";
-      return "<article class=\"farm\"><div class=\"icon\"><i class=\"fa-solid " + f.icon + "\"></i></div><h3>" + farmName(f) + "</h3>" +
+      const list = (names) => "<ul>" + names.map((n) => "<li><span>" + lbl(n) + "</span><span>" + fmt(itemCost(n)) + "</span></li>").join("") + "</ul>";
+      return "<article class=\"farm\"><div class=\"icon\"><i class=\"fa-solid " + f.icon + "\"></i></div><h3>" + t("farm_" + f.key) + "</h3>" +
         "<div class=\"big\">" + t("na") + "</div><p>" + t("note_" + f.key) + "</p>" +
         "<h4>" + t("f_setup", { x: fmt(farmCost(f.setup)) }) + "</h4>" + list(f.setup) +
         "<h4>" + t("f_upg") + "</h4>" + list(f.extras) +
@@ -401,7 +589,10 @@ T|Police Radio (Epic)|2|25000|10000||60
     document.querySelectorAll("[data-i18n-ph]").forEach((el) => { el.placeholder = t(el.dataset.i18nPh); });
     langBtns.forEach((b) => b.classList.toggle("active", b.dataset.lang === lang));
     buildCats();
+    buildMenuCats();
     renderRows();
+    renderTree();
+    renderOwnedCount();
     renderPlan();
     renderFarms();
   }
