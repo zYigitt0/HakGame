@@ -105,31 +105,62 @@
                 <button data-v="5000000">5M</button>
               </div>
             </div>
+            <div class="field">
+              <label for="jail" data-i18n="lbl_jail">Jail time (years)</label>
+              <div class="money"><input id="jail" type="number" min="0" step="5" value="0" inputmode="numeric"></div>
+            </div>
+            <div class="field">
+              <label for="level" data-i18n="lbl_level">Settlement level</label>
+              <select class="select" id="level">
+                <option value="0">0</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3" selected>3</option>
+              </select>
+            </div>
           </div>
+          <p class="hint center" id="planOwned"></p>
           <div id="planOut"></div>
         </div>
 
         <div class="panel" id="panel-shipments" hidden>
-          <div class="toolbar">
-            <input class="search" id="search" type="search" placeholder="Search items..." data-i18n-ph="ph_search" autocomplete="off">
-            <select class="select" id="tierSel">
-              <option value="" data-i18n="opt_all">All levels</option>
-              <option value="0" data-i18n="opt_0">Level 0</option>
-              <option value="1" data-i18n="opt_1">Level 1</option>
-              <option value="2" data-i18n="opt_2">Level 2</option>
-              <option value="3" data-i18n="opt_3">Level 3</option>
-            </select>
+          <div class="viewbar">
+            <div class="seg" id="viewSeg">
+              <button class="active" data-view="menu" data-i18n="view_menu">Menu</button>
+              <button data-view="list" data-i18n="view_list">List</button>
+            </div>
+            <span class="owned-count" id="ownedCount"></span>
+            <button class="catbtn" id="resetOwned" data-i18n="reset">Reset</button>
           </div>
-          <div class="cats" id="cats"></div>
-          <div class="table-wrap">
-            <table>
-              <thead>
-                <tr><th data-i18n="th_item">Item</th><th data-i18n="th_cat">Category</th><th data-i18n="th_lvl">Lvl</th><th data-i18n="th_research">Research</th><th data-i18n="th_buy">Buy</th><th data-i18n="th_req">Requires</th></tr>
-              </thead>
-              <tbody id="rows"></tbody>
-            </table>
+
+          <div id="view-menu">
+            <p class="hint" data-i18n="hint_menu">Click the items you already unlocked in your game.</p>
+            <div class="cats" id="menuCats"></div>
+            <div class="tree-wrap" id="tree"></div>
           </div>
-          <p class="count" id="count"></p>
+
+          <div id="view-list" hidden>
+            <div class="toolbar">
+              <input class="search" id="search" type="search" placeholder="Search items..." data-i18n-ph="ph_search" autocomplete="off">
+              <select class="select" id="tierSel">
+                <option value="" data-i18n="opt_all">All levels</option>
+                <option value="0" data-i18n="opt_0">Level 0</option>
+                <option value="1" data-i18n="opt_1">Level 1</option>
+                <option value="2" data-i18n="opt_2">Level 2</option>
+                <option value="3" data-i18n="opt_3">Level 3</option>
+              </select>
+            </div>
+            <div class="cats" id="cats"></div>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr><th data-i18n="th_item">Item</th><th data-i18n="th_cat">Category</th><th data-i18n="th_lvl">Lvl</th><th data-i18n="th_research">Research</th><th data-i18n="th_buy">Buy</th><th data-i18n="th_req">Requires</th></tr>
+                </thead>
+                <tbody id="rows"></tbody>
+              </table>
+            </div>
+            <p class="count" id="count"></p>
+          </div>
         </div>
 
         <div class="panel" id="panel-farms" hidden>
