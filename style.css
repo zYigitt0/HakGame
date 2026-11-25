@@ -989,80 +989,168 @@ td.num {
   color: #fff;
   background: linear-gradient(135deg, var(--blue), var(--blue-dark));
 }
-50% { transform: translate(90px, -70px) scale(1.2); }
+
+.viewbar {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
 }
 
-@keyframes drift3 {
-  0%, 100% { transform: translate(0, 0) scale(1); }
-  50% { transform: translate(-60px, -50px) scale(0.9); }
+.owned-count {
+  margin-left: auto;
+  color: var(--blue-light);
+  font-weight: 700;
+  font-size: 0.9rem;
 }
 
-@keyframes gridMove {
-  to { background-position: 0 56px, 56px 0; }
+.hint {
+  color: var(--muted);
+  font-size: 0.85rem;
+  margin-bottom: 14px;
 }
 
-@keyframes shine {
-  to { background-position: -250% 0; }
+.hint.center {
+  text-align: center;
 }
 
-@keyframes ping {
-  75%, 100% {
-    transform: scale(3);
-    opacity: 0;
-  }
+.sub {
+  margin: 24px 0 10px;
+  font-size: 0.8rem;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+  color: var(--muted);
 }
 
-@keyframes sweep {
-  to { left: 130%; }
+.tree-wrap {
+  overflow: auto;
+  max-height: 72vh;
+  padding: 22px;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  background: var(--surface);
 }
 
-@keyframes pulseGlow {
-  0%, 100% { box-shadow: 0 10px 30px -10px var(--glow); }
-  50% { box-shadow: 0 10px 40px -4px rgba(59, 130, 246, 0.65); }
+.roots {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: max-content;
 }
 
-@keyframes float {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-7px); }
+.tn {
+  display: flex;
+  align-items: center;
 }
 
-@keyframes wiggle {
-  0% { transform: rotate(0); }
-  25% { transform: rotate(-14deg) scale(1.15); }
-  60% { transform: rotate(10deg) scale(1.15); }
-  100% { transform: rotate(0); }
+.kids {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-left: 28px;
 }
 
-@media (max-width: 720px) {
-  .grid {
-    grid-template-columns: 1fr;
-  }
-
-  .hero {
-    padding: 136px 0 64px;
-  }
-
-  .nav-links a:not(.cta) {
-    display: none;
-  }
-
-  .orb {
-    filter: blur(60px);
-  }
+.kids::before {
+  content: "";
+  position: absolute;
+  left: -28px;
+  top: 50%;
+  width: 14px;
+  border-top: 2px solid var(--border-strong);
 }
 
-@media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    animation: none !important;
-    transition: none !important;
-    scroll-behavior: auto !important;
-  }
+.kids > .tn {
+  position: relative;
+}
 
-  .reveal {
-    opacity: 1;
-    transform: none;
-    filter: none;
-  }
+.kids > .tn::before {
+  content: "";
+  position: absolute;
+  left: -14px;
+  top: 50%;
+  width: 14px;
+  border-top: 2px solid var(--border-strong);
+}
+
+.kids > .tn::after {
+  content: "";
+  position: absolute;
+  left: -14px;
+  top: 0;
+  bottom: -10px;
+  border-left: 2px solid var(--border-strong);
+}
+
+.kids > .tn:first-child::after {
+  top: 50%;
+}
+
+.kids > .tn:last-child::after {
+  bottom: 50%;
+}
+
+.kids > .tn:only-child::after {
+  display: none;
+}
+
+.node {
+  flex-shrink: 0;
+  width: 156px;
+  padding: 9px 11px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: var(--surface-2);
+  color: var(--text);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: transform 0.2s, border-color 0.2s, background 0.2s, box-shadow 0.2s, opacity 0.2s;
+}
+
+.node b {
+  display: block;
+  font-size: 0.8rem;
+  line-height: 1.25;
+}
+
+.node span {
+  display: block;
+  margin-top: 3px;
+  color: var(--muted);
+  font-size: 0.74rem;
+}
+
+.node em {
+  display: block;
+  margin-top: 2px;
+  font-style: normal;
+  color: #fcd34d;
+  font-size: 0.7rem;
+  font-weight: 600;
+}
+
+.node:hover {
+  transform: translateY(-2px);
+  border-color: var(--border-strong);
+}
+
+.node.own {
+  border-color: transparent;
+  color: #fff;
+  background: linear-gradient(135deg, var(--blue), var(--blue-dark));
+  box-shadow: 0 8px 20px -10px var(--glow);
+}
+
+.node.own span {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.node.lock {
+  opacity: 0.45;
+}
+
+.node.lock:hover {
+  opacity: 0.8;
 }
